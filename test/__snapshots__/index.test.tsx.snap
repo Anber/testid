@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`disabled roles Roles shouldn't be rendered 1`] = `
+<div>
+  <span>
+    <i />
+  </span>
+</div>
+`;
+
+exports[`disabled roles Should merge classes 1`] = `
+<div
+  className="test-class existed-class"
+/>
+`;
+
+exports[`disabled roles Should pass className to the child 1`] = `
+<div
+  className="test-class"
+/>
+`;
+
+exports[`disabled roles Should pass unknown props to the child 1`] = `
+<div
+  unknownProp="value"
+/>
+`;
+
+exports[`enabled roles Roles should be rendered 1`] = `
+<div
+  data-test-id="parent"
+>
+  <span
+    data-test-id="parent:child"
+  >
+    <i
+      data-test-id="absolute"
+    />
+  </span>
+</div>
+`;
+
+exports[`enabled roles Should merge classes 1`] = `
+<div
+  className="test-class existed-class"
+  data-test-id="parent"
+/>
+`;
+
+exports[`enabled roles Should pass className to the child 1`] = `
+<div
+  className="test-class"
+  data-test-id="parent"
+/>
+`;
+
+exports[`enabled roles Should pass unknown props to the child 1`] = `
+<div
+  data-test-id="parent"
+  unknownProp="value"
+/>
+`;
