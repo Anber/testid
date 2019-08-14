@@ -3,7 +3,7 @@ import * as React from 'react';
 import globalConfig from './globalConfig';
 import Context from './Context';
 
-export const useRole = (
+export const useTestId = (
   name: string,
   relative = name.indexOf(globalConfig.separator) === 0
 ) => {
@@ -17,7 +17,7 @@ export const useRole = (
   );
 };
 
-export const useRoles = (names: string[]) => {
+export const useTestIds = (names: string[]) => {
   const namespace = React.useContext(Context);
   return names
     .map(name =>

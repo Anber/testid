@@ -71,7 +71,7 @@ function renderWithoutRole<TChild extends React.ReactElement>(
   );
 }
 
-export default class TestId<
+export class TestId<
   TChild extends React.ReactElement
 > extends React.PureComponent<
   PropType<TChild> & Readonly<{ name: string; children: TChild }>

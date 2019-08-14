@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as renderer from 'react-test-renderer';
 
-import TestId from '../src';
+import { TestId } from '../src';
 
 describe('enabled roles', () => {
   beforeAll(() => {

@@ -1,4 +1,2 @@
-import TestId from './TestId';
-
-export { useRole, useRoles } from './hooks';
-export default TestId;
+export { TestId } from './TestId';
+export { useTestId, useTestIds } from './hooks';
