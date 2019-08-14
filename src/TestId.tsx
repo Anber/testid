@@ -5,9 +5,11 @@ import globalConfig, { IConfig } from './globalConfig';
 
 type PropType<TElement> = TElement extends React.ReactElement<infer TProps>
   ? Pick<TProps, Exclude<keyof TProps, 'name' | 'children'>>
-  : never;
+  : {};
 
-interface IAnyProps {
+type RenderProp = (id: IAnyProps) => React.ReactElement | null;
+
+export interface IAnyProps {
   [prop: string]: any;
 }
 
@@ -26,27 +28,32 @@ function applyMappers<TOwn extends IAnyProps, TChild extends IAnyProps>(
 
 function render<TChild extends React.ReactElement>(
   name: string,
-  children: TChild,
+  children: TChild | RenderProp,
   otherProps: PropType<TChild>
 ) {
-  const el = React.cloneElement(
-    children,
-    Object.assign(
-      {
-        [globalConfig.attr]: name,
-      },
-      otherProps,
-      children.props,
-      applyMappers(otherProps, children.props)
-    )
-  );
+  const el =
+    typeof children === 'function'
+      ? children({
+          [globalConfig.attr]: name,
+        })
+      : React.cloneElement(
+          children,
+          Object.assign(
+            {
+              [globalConfig.attr]: name,
+            },
+            otherProps,
+            children.props,
+            applyMappers(otherProps, children.props)
+          )
+        );
 
   return <Provider value={name}>{el}</Provider>;
 }
 
 function renderRelative<TChild extends React.ReactElement>(
   name: string,
-  children: TChild,
+  children: TChild | RenderProp,
   otherProps: PropType<TChild>
 ) {
   return (
@@ -57,9 +64,13 @@ function renderRelative<TChild extends React.ReactElement>(
 }
 
 function renderWithoutRole<TChild extends React.ReactElement>(
-  children: TChild,
+  children: TChild | RenderProp,
   otherProps: PropType<TChild>
 ) {
+  if (typeof children === 'function') {
+    return children({});
+  }
+
   return React.cloneElement(
     children,
     Object.assign(
@@ -71,23 +82,27 @@ function renderWithoutRole<TChild extends React.ReactElement>(
   );
 }
 
-export class TestId<
-  TChild extends React.ReactElement
-> extends React.PureComponent<
-  PropType<TChild> & Readonly<{ name: string; children: TChild }>
-> {
-  static setConfig(config: Partial<IConfig>) {
-    Object.assign(globalConfig, config);
+function TestId<TChild extends React.ReactElement>(
+  props: PropType<TChild> &
+    Readonly<{
+      name: string;
+      children: TChild | RenderProp;
+    }>
+): React.ReactElement | null {
+  const { name, children, ...otherProps } = props;
+  if (!globalConfig.display) {
+    return renderWithoutRole(children, otherProps as PropType<TChild>);
   }
 
-  render() {
-    const { name, children, ...props } = this.props;
-    if (!globalConfig.display) {
-      return renderWithoutRole(children, props as PropType<TChild>);
-    }
-
-    return (name.indexOf(globalConfig.separator) === 0
-      ? renderRelative
-      : render)(name, children, props as PropType<TChild>);
-  }
+  return (name.indexOf(globalConfig.separator) === 0 ? renderRelative : render)(
+    name,
+    children,
+    otherProps as PropType<TChild>
+  );
 }
+
+TestId.setConfig = (config: Partial<IConfig>) => {
+  Object.assign(globalConfig, config);
+};
+
+export { TestId };

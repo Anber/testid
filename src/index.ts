@@ -1,2 +1,2 @@
-export { TestId } from './TestId';
+export { TestId, IAnyProps } from './TestId';
 export { useTestId, useTestIds } from './hooks';
