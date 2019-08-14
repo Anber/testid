@@ -2,11 +2,27 @@ import * as React from 'react';
 
 import { Consumer, Provider } from './Context';
 import globalConfig, { IConfig } from './globalConfig';
-import { classNames } from './utils';
 
 type PropType<TElement> = TElement extends React.ReactElement<infer TProps>
   ? Pick<TProps, Exclude<keyof TProps, 'name' | 'children'>>
   : never;
+
+interface IAnyProps {
+  [prop: string]: any;
+}
+
+function applyMappers<TOwn extends IAnyProps, TChild extends IAnyProps>(
+  ownProps: TOwn,
+  childProps: TChild
+): IAnyProps {
+  const entries = Object.entries(globalConfig.mappers);
+  const res: IAnyProps = {};
+  for (let [field, mapper] of entries) {
+    res[field] = mapper(ownProps[field], childProps[field]);
+  }
+
+  return res;
+}
 
 function render<TChild extends React.ReactElement>(
   name: string,
@@ -15,11 +31,14 @@ function render<TChild extends React.ReactElement>(
 ) {
   const el = React.cloneElement(
     children,
-    Object.assign({}, otherProps, children.props, {
-      [globalConfig.attr]: name,
-      className:
-        classNames(otherProps.className, children.props.className) || undefined,
-    })
+    Object.assign(
+      {
+        [globalConfig.attr]: name,
+      },
+      otherProps,
+      children.props,
+      applyMappers(otherProps, children.props)
+    )
   );
 
   return <Provider value={name}>{el}</Provider>;
@@ -43,10 +62,12 @@ function renderWithoutRole<TChild extends React.ReactElement>(
 ) {
   return React.cloneElement(
     children,
-    Object.assign({}, otherProps, children.props, {
-      className:
-        classNames(otherProps.className, children.props.className) || undefined,
-    })
+    Object.assign(
+      {},
+      otherProps,
+      children.props,
+      applyMappers(otherProps, children.props)
+    )
   );
 }
 
@@ -62,7 +83,7 @@ export default class TestId<
   render() {
     const { name, children, ...props } = this.props;
     if (!globalConfig.display) {
-      return renderWithoutRole<TChild>(children, props as PropType<TChild>);
+      return renderWithoutRole(children, props as PropType<TChild>);
     }
 
     return (name.indexOf(globalConfig.separator) === 0

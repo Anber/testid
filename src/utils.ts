@@ -1,10 +1,10 @@
 export function classNames(
-  first?: string | null,
-  second?: string | null
+  ...args: Array<string | null | undefined>
 ): string | undefined {
-  if (first && second) {
-    return `${first} ${second}`;
+  const filtered = args.filter(s => s);
+  if (filtered.length > 0) {
+    return filtered.join(' ');
   }
 
-  return first || second || undefined;
+  return undefined;
 }
