@@ -1,6 +1,55 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`disabled ids Roles shouldn't be rendered 1`] = `
+exports[`custom attribute and separator additional attributes should be rendered 1`] = `
+<div
+  data-role="parent"
+>
+  <span
+    data-role="parent/child"
+  >
+    <i
+      data-role="absolute"
+    />
+  </span>
+</div>
+`;
+
+exports[`custom attribute and separator render props 1`] = `
+<div
+  data-role="parent"
+>
+  <span
+    data-role="parent/child"
+  >
+    <i
+      data-role="absolute"
+    />
+  </span>
+</div>
+`;
+
+exports[`custom attribute and separator should merge classes 1`] = `
+<div
+  className="test-class existed-class"
+  data-role="parent"
+/>
+`;
+
+exports[`custom attribute and separator should pass className to the child 1`] = `
+<div
+  className="test-class"
+  data-role="parent"
+/>
+`;
+
+exports[`custom attribute and separator should pass unknown props to the child 1`] = `
+<div
+  data-role="parent"
+  unknownProp="value"
+/>
+`;
+
+exports[`disabled ids additional attributes should not be rendered 1`] = `
 <div>
   <span>
     <i />
@@ -8,33 +57,33 @@ exports[`disabled ids Roles shouldn't be rendered 1`] = `
 </div>
 `;
 
-exports[`disabled ids common Should merge classes 1`] = `
+exports[`disabled ids render props 1`] = `
+<div>
+  <span>
+    <i />
+  </span>
+</div>
+`;
+
+exports[`disabled ids should merge classes 1`] = `
 <div
   className="test-class existed-class"
 />
 `;
 
-exports[`disabled ids common Should pass className to the child 1`] = `
+exports[`disabled ids should pass className to the child 1`] = `
 <div
   className="test-class"
 />
 `;
 
-exports[`disabled ids common Should pass unknown props to the child 1`] = `
+exports[`disabled ids should pass unknown props to the child 1`] = `
 <div
   unknownProp="value"
 />
 `;
 
-exports[`disabled ids common render props 1`] = `
-<div>
-  <span>
-    <i />
-  </span>
-</div>
-`;
-
-exports[`enabled ids Roles should be rendered 1`] = `
+exports[`enabled ids additional attributes should be rendered 1`] = `
 <div
   data-test-id="parent"
 >
@@ -48,28 +97,7 @@ exports[`enabled ids Roles should be rendered 1`] = `
 </div>
 `;
 
-exports[`enabled ids common Should merge classes 1`] = `
-<div
-  className="test-class existed-class"
-  data-test-id="parent"
-/>
-`;
-
-exports[`enabled ids common Should pass className to the child 1`] = `
-<div
-  className="test-class"
-  data-test-id="parent"
-/>
-`;
-
-exports[`enabled ids common Should pass unknown props to the child 1`] = `
-<div
-  data-test-id="parent"
-  unknownProp="value"
-/>
-`;
-
-exports[`enabled ids common render props 1`] = `
+exports[`enabled ids render props 1`] = `
 <div
   data-test-id="parent"
 >
@@ -81,4 +109,25 @@ exports[`enabled ids common render props 1`] = `
     />
   </span>
 </div>
+`;
+
+exports[`enabled ids should merge classes 1`] = `
+<div
+  className="test-class existed-class"
+  data-test-id="parent"
+/>
+`;
+
+exports[`enabled ids should pass className to the child 1`] = `
+<div
+  className="test-class"
+  data-test-id="parent"
+/>
+`;
+
+exports[`enabled ids should pass unknown props to the child 1`] = `
+<div
+  data-test-id="parent"
+  unknownProp="value"
+/>
 `;

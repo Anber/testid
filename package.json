@@ -4,6 +4,11 @@
   "main": "dist/index.js",
   "module": "dist/testid.esm.js",
   "typings": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Anber/testid"
+  },
+  "license": "MIT",
   "files": [
     "dist"
   ],
