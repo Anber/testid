@@ -30,7 +30,7 @@ function applyMappers<TOwn extends IAnyProps, TChild extends IAnyProps>(
   return res;
 }
 
-function create<TAttr extends string>(
+function custom<TAttr extends string>(
   config: IConfig<TAttr>
 ): [IdComponent<TAttr>, IdHook<TAttr>, IdsHook<TAttr>] {
   function render<TChild extends React.ReactElement>(
@@ -142,7 +142,7 @@ function create<TAttr extends string>(
   return [TestId, useTestId, useTestIds];
 }
 
-const [TestId, useTestId, useTestIds] = create({
+const [TestId, useTestId, useTestIds] = custom({
   attr: 'data-test-id',
   separator: ':',
   display: true,
@@ -157,4 +157,4 @@ export {
   Id,
 };
 
-export { TestId, useTestId, useTestIds, create as custom };
+export { TestId, useTestId, useTestIds, custom };
