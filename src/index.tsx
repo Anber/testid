@@ -8,8 +8,8 @@ import {
   IdComponent,
   IdHook,
   IdsHook,
+  InnerRender,
   RenderFn,
-  PropType,
   Id,
 } from './types';
 
@@ -33,83 +33,67 @@ function applyMappers<TOwn extends IAnyProps, TChild extends IAnyProps>(
 function custom<TAttr extends string>(
   config: IConfig<TAttr>
 ): [IdComponent<TAttr>, IdHook<TAttr>, IdsHook<TAttr>] {
-  function render<TChild extends React.ReactElement>(
-    name: string,
-    children: TChild | RenderFn<TAttr>,
-    otherProps: PropType<TChild>
-  ) {
-    const el =
-      typeof children === 'function'
-        ? children({
-            [config.attr]: name,
-          } as Id<TAttr>)
-        : React.cloneElement(
-            children,
-            Object.assign(
-              {
-                [config.attr]: name,
-              },
-              otherProps,
-              children.props,
-              applyMappers(otherProps, children.props)
-            )
-          );
+  const render: InnerRender<TAttr> = (name, renderFn) => {
+    const idProp: Id<TAttr> = {};
+    idProp[config.attr] = name;
+    return <Provider value={name}>{renderFn(idProp)}</Provider>;
+  };
 
-    return <Provider value={name}>{el}</Provider>;
-  }
-
-  function renderRelative<TChild extends React.ReactElement>(
-    name: string,
-    children: TChild | RenderFn<TAttr>,
-    otherProps: PropType<TChild>
-  ) {
+  const renderRelative: InnerRender<TAttr> = (name, renderFn) => {
     return (
       <Consumer>
-        {namespace => render(`${namespace}${name}`, children, otherProps)}
+        {namespace => render(`${namespace}${name}`, renderFn)}
       </Consumer>
     );
-  }
+  };
 
-  function renderWithoutId<TChild extends React.ReactElement>(
-    children: TChild | RenderFn<TAttr>,
-    otherProps: PropType<TChild>
-  ) {
-    if (typeof children === 'function') {
-      return children({});
-    }
+  const renderWithoutId: InnerRender<TAttr, null> = <TProps extends {}>(
+    _: null,
+    renderFn: RenderFn<TProps, TAttr>
+  ) => renderFn({});
 
-    return React.cloneElement(
-      children,
-      Object.assign(
-        {},
+  function deprecatedRender({
+    children,
+    ...otherProps
+  }: any): RenderFn<typeof otherProps, TAttr> {
+    return id => {
+      const resProps: Partial<typeof otherProps & Id<TAttr>> = Object.assign(
+        id,
         otherProps,
         children.props,
         applyMappers(otherProps, children.props)
-      )
-    );
+      );
+
+      return React.cloneElement<typeof otherProps & Id<TAttr>>(
+        children as any,
+        resProps
+      );
+    };
   }
 
-  function TestId<TChild extends React.ReactElement>(
-    props: PropType<TChild> &
-      Readonly<{
-        name: string;
-        children: TChild | RenderFn<TAttr>;
-      }>
-  ): React.ReactElement | null {
-    const { name, children, ...otherProps } = props;
+  function asRender<TProp extends object>(
+    as: React.ElementType<TProp>,
+    props: TProp
+  ): RenderFn<TProp, TAttr> {
+    return id => React.createElement(as, { ...id, ...props });
+  }
+
+  const TestId: IdComponent<TAttr> = ({ as = null, name, ...otherProps }) => {
+    const renderFn: RenderFn<typeof otherProps, TAttr> =
+      as !== null ? asRender(as, otherProps) : deprecatedRender(otherProps);
+
     if (!config.display) {
-      return renderWithoutId(children, otherProps as PropType<TChild>);
+      return renderWithoutId<typeof otherProps>(null, renderFn);
     }
 
     return (name.indexOf(config.separator) === 0 ? renderRelative : render)(
       name,
-      children,
-      otherProps as PropType<TChild>
+      renderFn
     );
-  }
+  };
 
-  const useTestId = (
-    name: string,
+  const useTestId: IdHook<TAttr> = (
+    name,
     relative = name.indexOf(config.separator) === 0
   ) => {
     const namespace = React.useContext(Context);
@@ -123,7 +107,7 @@ function custom<TAttr extends string>(
     );
   };
 
-  const useTestIds = (names: string[]) => {
+  const useTestIds: IdsHook<TAttr> = names => {
     const namespace = React.useContext(Context);
     return names
       .map(name =>
@@ -144,17 +128,10 @@ function custom<TAttr extends string>(
 
 const [TestId, useTestId, useTestIds] = custom({
   attr: 'data-test-id',
-  separator: ':',
   display: true,
+  separator: ':',
 });
 
-export {
-  IConfig,
-  IdComponent,
-  IdHook,
-  IdsHook,
-  RenderFn,
-  Id,
-};
+export { IConfig, IdComponent, IdHook, IdsHook, RenderFn, Id };
 
 export { TestId, useTestId, useTestIds, custom };
