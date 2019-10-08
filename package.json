@@ -1,6 +1,6 @@
 {
   "name": "react-test-id",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "main": "dist/index.js",
   "module": "dist/testid.esm.js",
   "typings": "dist/index.d.ts",
