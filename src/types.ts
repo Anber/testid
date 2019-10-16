@@ -25,13 +25,15 @@ export interface IConfig<TAttr> {
   separator: string;
 }
 
-type IdComponentProps<
+export type IdComponentProps<
   TChild,
   TAttr extends string
 > = TChild extends keyof JSX.IntrinsicElements
   ? JSX.IntrinsicElements[TChild]
   : TChild extends React.ComponentType<infer T>
   ? TAttr extends keyof T
+    ? T
+    : T extends React.DetailedHTMLProps<any, any>
     ? T
     : never
   : never;

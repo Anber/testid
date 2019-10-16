@@ -15,7 +15,8 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
-    "test": "tsdx test --env=jsdom"
+    "test": "tsdx test --env=jsdom",
+    "test:dts": "dtslint --localTs node_modules/typescript/lib types"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -36,6 +37,7 @@
     "@types/react": "^16.9.1",
     "@types/react-dom": "^16.8.5",
     "@types/react-test-renderer": "^16.9.0",
+    "dtslint": "^0.9.8",
     "husky": "^3.0.3",
     "prettier": "^1.18.2",
     "pretty-quick": "^1.11.1",
