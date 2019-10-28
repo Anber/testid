@@ -44,8 +44,9 @@ export type IdComponent<TAttr extends string> = <
   props: {
     as: TChild;
     name: string;
-  } & IdComponentProps<TChild, TAttr>
-) => React.ReactElement;
+  } & IdComponentProps<TChild, TAttr> &
+    React.RefAttributes<HTMLElement>
+) => React.ReactElement | null;
 
 export type IdHook<TAttr extends string> = (
   name: string,

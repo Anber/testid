@@ -11,6 +11,7 @@ import {
   InnerRender,
   RenderFn,
   Id,
+  IdComponentProps,
 } from './types';
 
 const mappers = {
@@ -73,14 +74,29 @@ function custom<TAttr extends string>(
 
   function asRender<TProp extends object>(
     as: React.ElementType<TProp>,
-    props: TProp
+    props: TProp,
+    ref: React.Ref<HTMLElement>
   ): RenderFn<TProp, TAttr> {
-    return id => React.createElement(as, { ...id, ...props });
+    return id => React.createElement(as, { ...id, ...props, ref });
   }
 
-  const TestId: IdComponent<TAttr> = ({ as = null, name, ...otherProps }) => {
+  const forwardRefCmp = <
+    TChild extends keyof JSX.IntrinsicElements | React.ComponentType<any>
+  >(
+    {
+      as = null,
+      name,
+      ...otherProps
+    }: {
+      as: TChild;
+      name: string;
+    } & IdComponentProps<TChild, TAttr>,
+    ref: React.Ref<HTMLElement>
+  ) => {
     const renderFn: RenderFn<typeof otherProps, TAttr> =
-      as !== null ? asRender(as, otherProps) : deprecatedRender(otherProps);
+      as !== null
+        ? asRender(as, otherProps, ref)
+        : deprecatedRender(otherProps);
 
     if (!config.display) {
       return renderWithoutId<typeof otherProps>(null, renderFn);
@@ -91,6 +107,8 @@ function custom<TAttr extends string>(
       renderFn
     );
   };
+
+  const TestId: IdComponent<TAttr> = React.forwardRef(forwardRefCmp) as any; // FIXME
 
   const useTestId: IdHook<TAttr> = (
     name,

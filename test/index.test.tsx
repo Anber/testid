@@ -63,6 +63,24 @@ const run = <TAttr extends string>(
     expect(tree).toMatchSnapshot();
   });
 
+  test('should forward red', () => {
+    function createNodeMock(element: React.ReactElement) {
+      if (element.type === 'div') {
+        return {};
+      }
+
+      return null;
+    }
+
+    const ref = React.createRef<HTMLElement>();
+    renderer.create(<TestId as="div" name="parent" ref={ref} />, {
+      createNodeMock,
+    });
+
+    console.log('ref', ref);
+    expect(ref.current).not.toBe(null);
+  });
+
   test('should pass unknown props to the child', () => {
     const component = renderer.create(
       // @ts-ignore

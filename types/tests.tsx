@@ -10,7 +10,8 @@ function idComponentProps<
 }
 
 // tslint:disable-next-line no-unnecessary-generics
-const Fabric = <T>(): React.FC<T> => props => React.createElement('div', props);
+const Fabric = <T extends {}>(): React.FC<T> => props =>
+  React.createElement('div', props);
 
 // $ExpectType string | undefined
 idComponentProps('div', 'data-test-id').className;
